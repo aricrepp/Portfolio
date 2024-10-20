@@ -6,7 +6,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/portfolio/', // for production in gh-pages
+  base: '/', // for production in gh-pages
   plugins: [vue(), vueJsx()],
   resolve: {
     alias: {

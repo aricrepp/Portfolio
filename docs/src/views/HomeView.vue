@@ -13,7 +13,7 @@ import Projects from '../components/Projects/Projects.vue'
 
 <style>
 .main-container {
-  height: 2000px;
+  height: 100vh;
   width: 99vw;
   overflow-x: hidden;
 }
