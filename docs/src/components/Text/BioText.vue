@@ -1,24 +1,40 @@
 <template>
   <div class="text-container" ref="textContainer">
     <div class="name-container">
-      <h3>ARIC</h3>
-      <h3>REPP</h3>
+      <h3>Hi,</h3>
+      <h3 style="margin-left: 1em">I'm Aric Repp</h3>
     </div>
-    <ul class="cloud">
-      <li><span data-weight="4">NextJS</span></li>
-      <li><span data-weight="2">Games</span></li>
-      <li><span data-weight="5">Figma</span></li>
-      <li><span data-weight="7">AI Enthusiast</span></li>
-      <li><span data-weight="6">Jiu Jitsu</span></li>
-      <li><span data-weight="5">ThreeJS</span></li>
-      <li><span data-weight="3">UIUX</span></li>
-      <li><span data-weight="6">Family</span></li>
-      <li><span data-weight="3">Python</span></li>
-      <li><span data-weight="9">UI Engineer</span></li>
-      <li><span data-weight="4">VueJS</span></li>
-      <li><span data-weight="7">React</span></li>
-      <li><span data-weight="3">GCP</span></li>
-    </ul>
+    <div class="bio-container">
+      <p>Software Engineer - passionate about AI and web graphics.</p>
+      <p>I'm fluent in React, Vue, NextJS, and Typescript.</p>
+    </div>
+    <div>
+      <div class="cloud-container">
+        <h5>Lifestyle</h5>
+        <ul class="cloud-lifestyle">
+          <li><span>Family</span></li>
+          <li><span>Jiu Jitsu</span></li>
+          <li><span>Entrepreneur</span></li>
+          <li><span>Games</span></li>
+        </ul>
+      </div>
+      <div class="cloud-container">
+        <h5>Skills</h5>
+        <ul class="cloud-skills">
+          <li><span>NextJS</span></li>
+          <li><span>Figma</span></li>
+          <li><span>Gen AI</span></li>
+          <li><span>VueJS</span></li>
+          <li><span>React</span></li>
+          <li><span>Node</span></li>
+          <li><span>ThreeJS</span></li>
+          <li><span>UIUX</span></li>
+          <li><span>Python</span></li>
+          <li><span>UI Engineer</span></li>
+          <li><span>GCP</span></li>
+        </ul>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -78,92 +94,74 @@ export default defineComponent({
 .text-container {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   position: relative;
-  left: 35vw;
-  top: 1%;
-  width: 90vw;
+  right: 2em;
+  height: 93vh;
   z-index: 1;
-  overflow-x: hidden;
+  overflow: hidden;
+  margin-left: 50vw;
+  padding-left: 5em;
+  padding-top: 2em;
+}
+.name-container {
+  display: flex;
+  flex-direction: row;
+  width: 40vw;
 }
 
 .name-container h3 {
-  color: rgba(0, 0, 0, 0.6);
-  font-size: 20rem;
+  color: #464646;
+  font-size: 4rem;
   z-index: 1;
   font-weight: 600;
-  text-shadow: 2px 2px 3px rgba(255, 255, 255, 0.1);
   margin: 0;
   padding: 0;
-  letter-spacing: 0.2em;
-  line-height: 300px;
+  letter-spacing: 0.1em;
+  line-height: 100px;
 }
-
-ul.cloud {
+.bio-container p {
+  font-size: 1.2rem;
+}
+.cloud-container h5 {
+  margin-bottom: 0.4em;
+  padding: 0;
+}
+ul.cloud-lifestyle {
   list-style: none;
-  padding-left: 3em;
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  line-height: 2.75rem;
-  width: 50%;
-  height: 220px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0 10px;
+  line-height: 2rem;
+  width: 100%;
+  height: 60px;
+  padding: 0;
 }
 
-ul.cloud span {
-  --size: 4;
-  color: rgba(0, 0, 0, 0.6);
-  text-shadow: 2px 2px 3px rgba(255, 255, 255, 0.1);
-  font-size: calc(var(--size) * 0.25rem + 0.5rem);
+ul.cloud-skills {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0 10px;
+  line-height: 2rem;
+  width: 100%;
+  height: 80px;
+  padding: 0;
+}
+
+ul.cloud-skills span,
+ul.cloud-lifestyle span {
+  color: rgb(85, 85, 85);
+  font-size: 0.8em;
   display: block;
-  padding: 0.75rem 0.25rem;
+  padding: 0.1rem 0.75rem;
   position: relative;
   text-decoration: none;
-}
-
-ul.cloud span[data-weight='1'] {
-  --size: 1;
-}
-ul.cloud span[data-weight='2'] {
-  --size: 2;
-}
-ul.cloud span[data-weight='3'] {
-  --size: 3;
-}
-ul.cloud span[data-weight='4'] {
-  --size: 4;
-}
-ul.cloud span[data-weight='5'] {
-  --size: 6;
-}
-ul.cloud span[data-weight='6'] {
-  --size: 8;
-}
-ul.cloud span[data-weight='7'] {
-  --size: 10;
-}
-ul.cloud span[data-weight='8'] {
-  --size: 13;
-}
-ul.cloud span[data-weight='9'] {
-  --size: 16;
-}
-
-ul[data-show-value] span::after {
-  content: ' (' attr(data-weight) ')';
-  font-size: 1rem;
-}
-
-ul.cloud span::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 0;
-  height: 100%;
-  background: var(--color);
-  transform: translate(-50%, 0);
-  opacity: 0.15;
-  transition: width 0.25s;
+  background: #fff;
+  border-radius: 2em;
 }
 </style>

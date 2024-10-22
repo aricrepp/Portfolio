@@ -1,8 +1,10 @@
 <template>
   <div ref="container" class="threejs-container">
-    <button @click="startMeltAnimation" class="melt-button">
-      {{ buttonLabel }}
-    </button>
+    <div class="blob-controls-container">
+      <button @click="startMeltAnimation" class="melt-button">
+        {{ buttonLabel }}
+      </button>
+    </div>
   </div>
 </template>
 
@@ -29,22 +31,34 @@ export default {
     const mouseRigid = shallowRef(null)
     const sceneMiddle = new THREE.Vector3(0, 0, 0)
     const metaOffset = new THREE.Vector3(0.5, 0.5, 0.5)
-    const loader = new THREE.TextureLoader()
     const isMelting = ref(false)
     const raycaster = new THREE.Raycaster()
+    const isInitialized = ref(false)
 
     const initScene = async () => {
       const w = window.innerWidth
       const h = window.innerHeight
 
       scene.value = new THREE.Scene()
-      // scene.value.background = new THREE.Color(0x202020)
       camera.value = new THREE.PerspectiveCamera(75, w / h, 0.1, 2000)
       camera.value.position.z = 6
       camera.value.rotation.y = -THREE.MathUtils.degToRad(40)
       renderer.value = new THREE.WebGLRenderer()
       renderer.value.setSize(w, h)
       renderer.value.setClearColor(0x000000, 0)
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.4)
+      scene.value.add(ambientLight)
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5)
+      directionalLight.position.set(5, 5, 5)
+      scene.value.add(directionalLight)
+
+      const pointLight1 = new THREE.PointLight(0xffffff, 1.2)
+      pointLight1.position.set(-5, 3, -5)
+      scene.value.add(pointLight1)
+
+      const pmremGenerator = new THREE.PMREMGenerator(renderer.value)
+      scene.value.environment = pmremGenerator.fromScene(new THREE.Scene()).texture
 
       if (container.value) {
         container.value.appendChild(renderer.value.domElement)
@@ -64,27 +78,24 @@ export default {
         }
       }
 
-      resetMetaballs()
       await createMouseRigidBody()
       createMetaballs()
-      // createGradientBackground()
       animate()
+      isInitialized.value = true
     }
 
     const startMeltAnimation = () => {
-      if (isMelting.value) {
+      if (bodies.value.length === 0) {
+        resetMetaballs()
+      } else if (isMelting.value) {
         resetMetaballs()
         isMelting.value = false
       } else {
-        if (bodies.value.length === 0) {
-          resetMetaballs()
-        } else {
-          const currentTime = clock.getElapsedTime()
-          bodies.value.forEach((bodyWrapper) => {
-            bodyWrapper.creationTime = currentTime
-          })
-          isMelting.value = true
-        }
+        const currentTime = clock.getElapsedTime()
+        bodies.value.forEach((bodyWrapper) => {
+          bodyWrapper.creationTime = currentTime
+        })
+        isMelting.value = true
       }
     }
 
@@ -130,23 +141,36 @@ export default {
       for (let i = 0; i < numBodies; i++) {
         const body = getBody({ debug: debugBodies, RAPIER, world: toRaw(world.value), isMelting })
         bodies.value.push(body)
-        if (debugBodies) {
-          scene.value.add(body.mesh)
-        }
       }
     }
 
     const createMouseRigidBody = async () => {
       const textureLoader = new THREE.TextureLoader()
-      const matcap = textureLoader.load('../assets/black-n-shiney.jpg')
+      const matcap = textureLoader.load(BlobCursor)
 
       const bodyDesc = RAPIER.RigidBodyDesc.kinematicPositionBased().setTranslation(0, 0, 0)
       mouseRigid.value = world.value.createRigidBody(bodyDesc)
       const dynamicCollider = RAPIER.ColliderDesc.ball(0.5)
       world.value.createCollider(dynamicCollider, mouseRigid.value)
 
-      const geometry = new THREE.IcosahedronGeometry(0.25, 3)
-      const material = new THREE.MeshNormalMaterial({ matcap })
+      const geometry = new THREE.IcosahedronGeometry(0.45, 4)
+      const material = new THREE.MeshPhysicalMaterial({
+        matcap,
+        vertexColors: true,
+        flatShading: false,
+        smoothShading: true,
+        wireframe: false,
+        color: 0x00bbf1,
+        metalness: 0.1,
+        roughness: 0.2,
+        transmission: 0.9,
+        transparent: true,
+        thickness: 0.5,
+        envMapIntensity: 1.5,
+        clearcoat: 1,
+        clearcoatRoughness: 0.1,
+        side: THREE.DoubleSide
+      })
       mouseMesh.value = new THREE.Mesh(geometry, material)
       mouseMesh.value.userData.update = () => {
         raycaster.setFromCamera(mousePos.value, camera.value)
@@ -168,14 +192,27 @@ export default {
       const textureLoader = new THREE.TextureLoader()
       const matcap = textureLoader.load(BlobCursor)
 
-      const metaMat = new THREE.MeshNormalMaterial({
+      const metaMat = new THREE.MeshPhysicalMaterial({
         matcap,
-        vertexColors: true
+        vertexColors: true,
+        flatShading: false,
+        smoothShading: true,
+        wireframe: false,
+        color: 0x00bbf1,
+        metalness: 0.1,
+        roughness: 0.2,
+        transmission: 0.9,
+        transparent: true,
+        thickness: 0.5,
+        envMapIntensity: 1.5,
+        clearcoat: 1,
+        clearcoatRoughness: 0.1,
+        side: THREE.DoubleSide
       })
 
-      metaballs.value = new MarchingCubes(96, metaMat, true, true, 90000)
+      metaballs.value = new MarchingCubes(80, metaMat, true, true, 20000)
       metaballs.value.scale.setScalar(6)
-      metaballs.value.isolation = 1000
+      metaballs.value.isolation = 500
       metaballs.value.userData.update = () => {
         metaballs.value.reset()
         const elapsedTime = clock.getElapsedTime()
@@ -281,12 +318,16 @@ export default {
       let colliderDesc = RAPIER.ColliderDesc.ball(size).setDensity(density)
       world.createCollider(colliderDesc, rigid)
 
-      const color = new THREE.Color().setHSL(Math.random(), 1, 0.5)
+      const hue = Math.random()
+      const saturation = 0.8
+      const lightness = 0.6
+      const color = new THREE.Color().setHSL(hue, saturation, lightness)
       const initialPosition = new THREE.Vector3(x, y, z)
 
       let mesh
       if (debug === true) {
         const geometry = new THREE.IcosahedronGeometry(size, 3)
+        geometry.computeVertexNormals()
         const material = new THREE.MeshBasicMaterial({
           color
         })
@@ -320,24 +361,6 @@ export default {
       return { color, mesh, rigid, update, meltSpeed, meltDelay, creationTime }
     }
 
-    // getLayer ----------------------------
-    const getSprite = ({ hasFog, color, opacity, path, pos, size }) => {
-      const spriteMat = new THREE.SpriteMaterial({
-        color,
-        fog: hasFog,
-        map: loader.load(path),
-        transparent: true,
-        opacity
-      })
-      spriteMat.color.offsetHSL(0, 0, Math.random() * 0.2 - 0.1)
-      const sprite = new THREE.Sprite(spriteMat)
-      sprite.position.set(pos.x, -pos.y, pos.z)
-      size += Math.random() - 0.5
-      sprite.scale.set(size, size, size)
-      sprite.material.rotation = 0
-      return sprite
-    }
-
     onMounted(() => {
       initScene()
       window.addEventListener('resize', handleResize)
@@ -352,10 +375,13 @@ export default {
     })
 
     const buttonLabel = computed(() => {
-      if (isMelting.value) {
-        return 'Reset'
-      } else if (bodies.value.length === 0) {
+      if (!isInitialized.value) {
+        return ''
+      }
+      if (bodies.value.length === 0) {
         return 'Create'
+      } else if (isMelting.value) {
+        return 'Reset'
       } else {
         return 'Melt'
       }
@@ -381,14 +407,25 @@ export default {
   left: 0;
   z-index: 2;
 }
-.melt-button {
-  color: white;
-  background: transparent;
-  border: none;
-  font-size: 1rem;
-  width: 4em;
+.blob-controls-container {
   position: fixed;
-  bottom: 1em;
-  left: 1em;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0.5em;
+  width: 20em;
+  height: 3em;
+  bottom: 4.5em;
+  left: 4em;
+}
+.melt-button {
+  position: relative;
+  background: #e4e4e4;
+  color: black;
+  border-radius: 3em;
+  border: none;
+  font-size: 0.8rem;
+  padding: 0.7em 1em;
 }
 </style>

@@ -6,7 +6,7 @@ import { RouterLink, RouterView } from 'vue-router'
   <header>
     <div class="wrapper">
       <nav>
-        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/">Aricrepp.</RouterLink>
       </nav>
     </div>
   </header>
@@ -19,11 +19,12 @@ header {
   line-height: 1.5;
   height: 6em;
   position: fixed;
-  margin: 0 2rem;
+  margin: 0 4rem;
+  z-index: 10;
 }
 
 nav a.router-link-exact-active {
-  color: rgba(236, 236, 236, 0.6);
+  color: rgba(0, 0, 0, 1);
   text-shadow: 2px 2px 3px rgba(255, 255, 255, 0.1);
 }
 
@@ -32,7 +33,7 @@ nav a.router-link-exact-active:hover {
 }
 
 nav a {
-  color: rgba(0, 0, 0, 0.6);
+  color: rgba(0, 0, 0, 1);
   text-shadow: 2px 2px 3px rgba(255, 255, 255, 0.1);
   text-decoration: none;
   display: inline-block;
