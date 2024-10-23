@@ -1,16 +1,22 @@
 <template>
   <div class="text-container" ref="textContainer">
     <div class="name-container">
-      <h3>Hi,</h3>
-      <h3 style="margin-left: 1em">I'm Aric Repp</h3>
+      <div><font-awesome-icon :icon="['fas', 'user-circle']" size="3x" color="#464646" /></div>
+      <h3 style="margin-left: 0.5em">Aric Repp</h3>
+      <h3
+        class="job-title"
+        style="margin-left: 0.5em; font-size: 1.2rem; line-height: 40px; margin-top: 10px"
+      >
+        - Software Engineer / Designer
+      </h3>
     </div>
     <div class="bio-container">
-      <p>Software Engineer - passionate about AI and web graphics.</p>
-      <p>I'm fluent in React, Vue, NextJS, and Typescript.</p>
+      <p>Passionate about AI and web graphics.</p>
+      <p>Frontend Stacks - React, Vue, NextJS, and Typescript.</p>
     </div>
     <div>
       <div class="cloud-container">
-        <h5>Lifestyle</h5>
+        <h5>Lifestyle {{ '\u{26A1}' }}</h5>
         <ul class="cloud-lifestyle">
           <li><span>Family</span></li>
           <li><span>Jiu Jitsu</span></li>
@@ -19,7 +25,7 @@
         </ul>
       </div>
       <div class="cloud-container">
-        <h5>Skills</h5>
+        <h5>Skills {{ '\u{1F680}' }}</h5>
         <ul class="cloud-skills">
           <li><span>NextJS</span></li>
           <li><span>Figma</span></li>
@@ -32,7 +38,29 @@
           <li><span>Python</span></li>
           <li><span>UI Engineer</span></li>
           <li><span>GCP</span></li>
+          <li><span>Agile</span></li>
+          <li><span>Jira</span></li>
         </ul>
+      </div>
+    </div>
+    <div class="cloud-container">
+      <h5>Current Projects {{ '\u{1F525}' }}</h5>
+      <div class="project1">
+        <h4>Atak - NPM Package</h4>
+        <p style="font-weight: 300">
+          This package that I've been developing is meant to connect with pre-existing testing
+          frameworks, check test assertions using AI, and return a calculated score of your testing
+          suite. Future iterations would allow for more finely tuned AI models that could return
+          responses on how to improve your testing suite.
+        </p>
+      </div>
+      <div class="project1">
+        <h4>EQO - Social Music App</h4>
+        <p style="font-weight: 300">
+          A social media music app for the modern social lifestyles. EQO intends to take the power
+          and presence that social media delivers together with a more localized experience that
+          targets the individual at a town level.
+        </p>
       </div>
     </div>
   </div>
@@ -40,9 +68,8 @@
 
 <script>
 import { ref, defineComponent, computed } from 'vue'
-// const textContainer = ref(null)
 export default defineComponent({
-  name: 'WordCollage',
+  name: 'BioText',
   props: {
     words: {
       type: Array,
@@ -97,22 +124,31 @@ export default defineComponent({
   justify-content: space-between;
   position: relative;
   right: 2em;
-  height: 93vh;
+  height: 70vh;
   z-index: 1;
   overflow: hidden;
   margin-left: 50vw;
   padding-left: 5em;
   padding-top: 2em;
+  padding-right: 3em;
 }
 .name-container {
   display: flex;
   flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
   width: 40vw;
+}
+.name-container div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 1.8em;
 }
 
 .name-container h3 {
   color: #464646;
-  font-size: 4rem;
+  font-size: 3rem;
   z-index: 1;
   font-weight: 600;
   margin: 0;
@@ -120,12 +156,21 @@ export default defineComponent({
   letter-spacing: 0.1em;
   line-height: 100px;
 }
+.bio-container {
+  margin-bottom: 1em;
+}
 .bio-container p {
   font-size: 1.2rem;
 }
+.cloud-container {
+  margin-bottom: 0.7em;
+}
 .cloud-container h5 {
-  margin-bottom: 0.4em;
+  margin-bottom: 1em;
   padding: 0;
+}
+.project1 {
+  margin: 1em 0;
 }
 ul.cloud-lifestyle {
   list-style: none;
