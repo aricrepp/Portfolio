@@ -1,7 +1,6 @@
 <script setup>
 import Blob from '../components/Blob.vue'
 import BioText from '../components/Text/BioText.vue'
-import Projects from '../components/Projects/Projects.vue'
 </script>
 
 <template>
